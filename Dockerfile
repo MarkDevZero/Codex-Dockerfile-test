@@ -1,15 +1,22 @@
-# Dockerfile for a minimal Flask web application
-# Builds a slim Python image and runs a simple app
 FROM python:3.12-slim
 
-# Ensure pip is installed and up to date, then install Flask
-RUN python -m ensurepip && pip install --no-cache-dir --upgrade pip Flask
+# 更新系統並安裝必要的套件
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory for the application
+# 安裝 Flask
+RUN pip install --upgrade pip
+RUN pip install Flask
+
+# 設定工作目錄
 WORKDIR /app
 
-# Copy the application source
-COPY app.py .
+# 複製當前資料夾的內容到容器內的工作目錄
+COPY . /app
 
-# Default command to run the Flask app
+# 暴露端口
+EXPOSE 5000
+
+# 容器啟動時執行的命令
 CMD ["python", "app.py"]
